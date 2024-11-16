@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from os import devnull
 import pathlib
 import platform
 import requests
@@ -32,14 +33,6 @@ def download_file(url: str, filename: str):
 
 
 if SMALLER_VIDEOS:
-    # Determine OS to set null device
-    if platform.system() == 'Windows':
-        ffmpeg_suffix = 'NUL'
-    elif platform.system() in ('Linux', 'Darwin'): # macOS is Darwin (Apple)
-        ffmpeg_suffix = '/dev/null'
-    else:
-        raise ValueError("Unexpected OS. Please edit the script.")
-
     # Add FFMPEG to PATH
     sys.path.insert(0, pathlib.Path(path_to_ffmpeg))
 
@@ -55,7 +48,7 @@ if SMALLER_VIDEOS:
         # Converts video to MP4 (overwrites the original)
 
         # First pass (use -y to overwrite)
-        command_1 = f'{command_header} -y -i "{input_filename}" {command_encoding} {command_resize} -an -pass 1 -f mp4 NUL'
+        command_1 = f'{command_header} -y -i "{input_filename}" {command_encoding} {command_resize} -an -pass 1 -f mp4 {devnull}'
         # Second pass
         command_2 = f'{command_header} -i "{input_filename}" {command_encoding} {command_resize} -an -pass 2 "{temporary_filename}"'
 
